@@ -26,53 +26,36 @@ echo "Total CPU cores: $all_threads"
 threads_per_gpu=$((all_threads / NUM_GPUS))
 echo "Threads per GPU: $threads_per_gpu"
 
-
-EXP_NAME=finetune_ssv2_vit-b16_torch
-OUTPUT_DIR="work_dir_dali/finetune/${EXP_NAME}"
-
+EXP_NAME=pretrain_ssv2_vit-b16
+OUTPUT_DIR="work_dir_dali/pretrain/${EXP_NAME}"
 ROOT_PATH='video_dataset'
-TRAIN_DATA_PATH="video_dataset/ssv2_train_new.csv"
-VAL_DATA_PATH="video_dataset/ssv2_val_new.csv"
-TEST_DATA_PATH="video_dataset/ssv2_val_new.csv"
-PRETRAIN_MODEL_PATH="checkpoint/ssv2_vitb_finetune_ep800.pth"
+DATA_PATH="video_dataset/ssv2_train_new.csv"
 
 # update --batch_size ------>  Speedup
 # update --dali_py_num_workers (90% * threads_per_gpu) ------>  max Speedup
 # FLASH=1 ------> open 'flash-attn' Speedup
-# DALI=1 ------> DALI-aug
-# TORCH=1 ------> torch-aug
 
-
-TORCH=1 FLASH=1 torchrun --nproc_per_node="${NUM_GPUS}" --nnodes="${NNODES}" --node_rank="${RANK}" --master_addr="${ADDR}" --master_port="${PORT}" \
-        finetune_main_deepspeed.py \
-        --model vit_base_patch16_224 \
-        --data_set SSV2 \
-        --nb_classes 174 \
-        --train_data_path ${TRAIN_DATA_PATH} \
-        --val_data_path ${VAL_DATA_PATH} \
-        --test_data_path ${TEST_DATA_PATH} \
+FLASH=1 torchrun --nproc_per_node="${NUM_GPUS}" --nnodes="${NNODES}" --node_rank="${RANK}" --master_addr="${ADDR}" --master_port="${PORT}" \
+        pretrain_main_bf16.py \
+        --model pixel_pretrain_videomae_base_patch16_224 \
+        --data_path ${DATA_PATH} \
         --data_root ${ROOT_PATH} \
-        --finetune ${PRETRAIN_MODEL_PATH} \
         --log_dir ${OUTPUT_DIR} \
         --output_dir ${OUTPUT_DIR} \
-        --epochs 50 \
+        --epochs 1200 \
         --save_ckpt_freq 10 \
-        --batch_size 128 \
+        --batch_size 256 \
         --num_frames 16 \
         --tubelet_size 2 \
-        --sparse_sampling \
+        --sampling_rate 2 \
         --dali_num_threads 4 \
-        --dali_py_num_workers 12 \
+        --dali_py_num_workers 8 \
+        --mask_ratio 0.9 \
+        --decoder_depth 4 \
         --input_size 224 \
-        --short_side_size 224 \
-        --smoothing 0.1 \
-        --use_mean_pooling \
+        --drop_path 0.0 \
         --lr 1e-3 \
         --min_lr 1e-5 \
-        --drop_path 0.1 \
-        --opt_betas 0.9 0.999 \
-        --weight_decay 0.05 \
-        --warmup_epochs 5 \
-        --layer_decay 0.75 \
-        --test_tta_num_segment 2 \
-        --test_tta_num_crop 3
+        --opt_betas 0.9 0.95 \
+        --warmup_epochs 40 \
+        --weight_decay 0.05

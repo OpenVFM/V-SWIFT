@@ -510,7 +510,7 @@ def auto_load_model_ddp(args,
         print("Resume checkpoint %s" % args.resume)
         if 'optimizer' in checkpoint and 'epoch' in checkpoint:
             optimizer.load_state_dict(checkpoint['optimizer'])
-            args.start_epoch = checkpoint['epoch']
+            args.start_epoch = checkpoint['epoch'] + 1
             print("With optim & sched!")
 
 
@@ -1305,10 +1305,15 @@ def validation_one_epoch(data_loader, model, device, args):
         target = target.to(device, non_blocking = True)
         target = target.view(-1)
 
-        with torch.cuda.amp.autocast():
+        if args.enable_deepspeed:
+            videos = videos.half()
             output = model(videos)
             loss = criterion(output, target)
-            
+        else:
+            with torch.cuda.amp.autocast(dtype=torch.bfloat16):
+                output = model(videos)
+                loss = criterion(output, target)   
+
         acc1, acc5 = accuracy(output, target, topk = (1, 5))
         batch_size = videos.shape[0]
         metric_logger.update(loss=loss.item())
@@ -1401,10 +1406,15 @@ def final_test(data_loader, model, device, file, args):
         split_nb = split_nb.cpu().numpy().tolist()
         sample_idx = sample_idx.cpu().numpy().tolist()
 
-        with torch.cuda.amp.autocast():
+        if args.enable_deepspeed:
+            videos = videos.half()
             output = model(videos)
             loss = criterion(output, target)
-       
+        else:
+            with torch.cuda.amp.autocast(dtype=torch.bfloat16):
+                output = model(videos)
+                loss = criterion(output, target)     
+
         for i in range(output.size(0)):
             string = "{} {} {} {} {}\n".format(
                 str(int(sample_idx[i])), str(output.data[i].float().cpu().numpy().tolist()),

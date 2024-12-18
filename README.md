@@ -109,10 +109,10 @@ pip install opencv-python
       a. Large-Scale Storage Solution:
       If your computing cluster has ample storage space, we recommend using the `num_shards=world_size` and `shard_id=rank` method for data storage. Ensure that each machine loads every piece of data from the entire dataset.
 
+      ![sharding](misc/sharding.png)
+
       b. Solution for Limited Storage Space:
       Should your storage space be constrained, we suggest splitting the data to ensure that video data is evenly distributed across each machine. You can set `gpus_not_equal_num_shards` and `set_max_sample="estimated max_sample of the pretrain dataset"` for data storage. To maintain consistent data volume on each machine, if discrepancies are found, we will calculate the maximum data volume (maximum) and perform resampling on machines that do not meet this volume to ensure even data distribution.
-
-      ![sharding](misc/sharding.png)
 
 ## 🚗 Citation
 

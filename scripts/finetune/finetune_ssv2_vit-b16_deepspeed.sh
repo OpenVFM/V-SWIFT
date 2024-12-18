@@ -26,14 +26,15 @@ echo "Total CPU cores: $all_threads"
 threads_per_gpu=$((all_threads / NUM_GPUS))
 echo "Threads per GPU: $threads_per_gpu"
 
-EXP_NAME=finetune_ssv2_vit-g14_v4
+
+EXP_NAME=finetune_ssv2_vit-b16_torch
 OUTPUT_DIR="work_dir_dali/finetune/${EXP_NAME}"
 
 ROOT_PATH='video_dataset'
 TRAIN_DATA_PATH="video_dataset/ssv2_train_new.csv"
 VAL_DATA_PATH="video_dataset/ssv2_val_new.csv"
 TEST_DATA_PATH="video_dataset/ssv2_val_new.csv"
-PRETRAIN_MODEL_PATH="work_dir_dali/checkpoint-19.pth"
+PRETRAIN_MODEL_PATH="checkpoint/ssv2_vitb_finetune_ep800.pth"
 
 # update --batch_size ------>  Speedup
 # update --dali_py_num_workers (90% * threads_per_gpu) ------>  max Speedup
@@ -41,9 +42,10 @@ PRETRAIN_MODEL_PATH="work_dir_dali/checkpoint-19.pth"
 # DALI=1 ------> DALI-aug
 # TORCH=1 ------> torch-aug
 
+
 TORCH=1 FLASH=1 torchrun --nproc_per_node="${NUM_GPUS}" --nnodes="${NNODES}" --node_rank="${RANK}" --master_addr="${ADDR}" --master_port="${PORT}" \
         finetune_main_deepspeed.py \
-        --model vit_giant_patch14_224 \
+        --model vit_base_patch16_224 \
         --data_set SSV2 \
         --nb_classes 174 \
         --train_data_path ${TRAIN_DATA_PATH} \
@@ -54,8 +56,8 @@ TORCH=1 FLASH=1 torchrun --nproc_per_node="${NUM_GPUS}" --nnodes="${NNODES}" --n
         --log_dir ${OUTPUT_DIR} \
         --output_dir ${OUTPUT_DIR} \
         --epochs 50 \
-        --save_ckpt_freq 2 \
-        --batch_size 12 \
+        --save_ckpt_freq 10 \
+        --batch_size 128 \
         --num_frames 16 \
         --tubelet_size 2 \
         --sparse_sampling \
@@ -65,13 +67,13 @@ TORCH=1 FLASH=1 torchrun --nproc_per_node="${NUM_GPUS}" --nnodes="${NNODES}" --n
         --short_side_size 224 \
         --smoothing 0.1 \
         --use_mean_pooling \
-        --lr 2.3e-4 \
-        --min_lr 1e-6 \
-        --clip_grad 5.0 \
-        --drop_path 0.25 \
+        --lr 1e-3 \
+        --min_lr 1e-5 \
+        --drop_path 0.1 \
         --opt_betas 0.9 0.999 \
         --weight_decay 0.05 \
         --warmup_epochs 5 \
-        --layer_decay 0.9 \
+        --layer_decay 0.75 \
         --test_tta_num_segment 2 \
-        --test_tta_num_crop 3
+        --test_tta_num_crop 3 \
+        --enable_deepspeed

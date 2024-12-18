@@ -39,12 +39,12 @@ PRETRAIN_MODEL_PATH="checkpoint/ssv2_vitb_finetune_ep800.pth"
 #Top-1: 68.96%, Top-5: 91.57%
 
 # update --batch_size ------>  Speedup
-# update --dali_py_num_workers (80%+ * threads_per_gpu) ------>  Speedup
+# update --dali_py_num_workers (90% * threads_per_gpu) ------>  max Speedup
 # FLASH=1 ------> open 'flash-attn' Speedup
 # DALI=1 ------> DALI-aug
 # TORCH=1 ------> torch-aug
 
-DALI=1 FLASH=1 torchrun --nproc_per_node="${NUM_GPUS}" --nnodes="${NNODES}" --node_rank="${RANK}" --master_addr="${ADDR}" --master_port="${PORT}" \
+TORCH=1 FLASH=1 torchrun --nproc_per_node="${NUM_GPUS}" --nnodes="${NNODES}" --node_rank="${RANK}" --master_addr="${ADDR}" --master_port="${PORT}" \
         finetune_main_deepspeed.py \
         --model vit_base_patch16_224 \
         --data_set SSV2 \

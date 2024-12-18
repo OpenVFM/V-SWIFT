@@ -171,9 +171,7 @@ class ExternalInputCallable:
             test_info = None
 
         # check
-        if len(example_info) == 4:
-            video_path, video_label, sframe, eframe = example_info
-        elif len(example_info) == 6:
+        if len(example_info) == 6:
             source_name, video_path, video_label, sframe, eframe, frame_nums = example_info
         else:
             print("format: video_path,video_label")
