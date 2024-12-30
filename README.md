@@ -114,6 +114,16 @@ pip install opencv-python
       b. Solution for Limited Storage Space:
       Should your storage space be constrained, we suggest splitting the data to ensure that video data is evenly distributed across each machine. You can set `gpus_not_equal_num_shards` and `set_max_sample="estimated max_sample of the pretrain dataset"` for data storage. To maintain consistent data volume on each machine, if discrepancies are found, we will calculate the maximum data volume (maximum) and perform resampling on machines that do not meet this volume to ensure even data distribution.
 
+
+## Dataset Contributors
+This project would not have been possible without the invaluable contributions of the following individuals, who have been instrumental in data scraping and collection:  
+Thank you to all the contributors for their hard work and dedication!
+
+| Contributor      | Emial    |
+|------------------|----------|
+| **Bin Qin**         | skyqin@gmail.com              |
+
+
 ## 🚗 Citation
 
 If you find this repository useful, please use the following BibTeX entry for citation.
