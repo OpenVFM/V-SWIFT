@@ -132,7 +132,7 @@ If you find this repository useful, please use the following BibTeX entry for ci
 @misc{deepglint_vswift2024,
       title={V-SWIFT: Training a Small VideoMAE Model on a Single Machine in a Day}, 
       url={ https://github.com/deepglint/V-SWIFT },
-      author={Yang, Ninghua},
+      author={Yang, Ninghua and Feng, Ziyong},
       year={2024}
 }
 ```
