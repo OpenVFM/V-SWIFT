@@ -118,6 +118,33 @@ pip install opencv-python
 Thanks so much to all of our amazing contributors!
 
 <!-- readme: collaborators,contributors -start -->
+<table>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/anxiangsir">
+                    <img src="https://avatars.githubusercontent.com/u/31175974?v=4" width="100;" alt="anxiangsir"/>
+                    <br />
+                    <sub><b>Xiang An</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/yangninghua">
+                    <img src="https://avatars.githubusercontent.com/u/32252319?v=4" width="100;" alt="yangninghua"/>
+                    <br />
+                    <sub><b>yangninghua</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/ZhaoYan-ai">
+                    <img src="https://avatars.githubusercontent.com/u/91243333?v=4" width="100;" alt="ZhaoYan-ai"/>
+                    <br />
+                    <sub><b>ZhaoYan-ai</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
+</table>
 <!-- readme: collaborators,contributors -end -->
 
 
